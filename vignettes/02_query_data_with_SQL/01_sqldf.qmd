@@ -1,0 +1,26 @@
+---
+title: "SQL"
+format: gfm
+editor: source
+---
+
+```{r}
+pacman::p_load(here, tidyverse, sqldf)
+
+data_dir <- here('data', 'cooked')
+file_visitors <- fs::path(data_dir, 'visitors.rds')
+
+visitors <- read_rds(file_visitors)
+```
+
+Note how you can refer to any dataframe in your environment using the `from` command. 
+```{r}
+sqldf("
+select 
+    avg(amount) as mean_amount
+from
+    visitors 
+where
+    amount > 0
+")
+```

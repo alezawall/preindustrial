@@ -5,7 +5,10 @@ editor: source
 ---
 
 ```{r}
-pacman::p_load(tidyverse, sqldf)
+pacman::p_load(here, tidyverse, sqldf)
+
+data_dir <- here('data', 'cooked')
+file_visitors <- fs::path(data_dir, 'visitors.rds')
 ```
 
 ```{r}
@@ -17,7 +20,7 @@ CONVERSION_RATE <- .25
 
 
 ```{r}
-df <- 
+df_visitors <- 
     tibble(
         visitor_id = 1:N,
         visit_date = sample(date_range, N, replace=TRUE),
@@ -25,23 +28,22 @@ df <-
         amount = convert * rnorm(N, 100, 20) |> round(2)
     )
 
-head(df)
+head(df_visitors)
 ```
 
 ```{r}
-write_rds(df, "visitors.rds")
+write_rds(df_visitors, file_visitors)
 ```
 
-Note how you can refer to any loaded dataframe in the `from` command
+Note how you can refer to any dataframe in your environment using the `from` command. 
 ```{r}
-sqldf(
-"
+sqldf("
 select 
-    visitor_id
+    avg(amount) as mean_amount
 from
-    df 
+    df_visitors 
 where
-    amount = 0
+    amount > 0
 ")
 ```
 
